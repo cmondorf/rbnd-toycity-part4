@@ -1,6 +1,8 @@
 # This file contains instructions for how to create a database.
 # If the file does not exist yet, it opens a new writable file
 # and adds a header for the columns: id, brand, product, price
+require 'csv'
+
 
 def db_create
   data_path = File.dirname(__FILE__) + "/data.csv"
@@ -10,3 +12,5 @@ def db_create
     end
   end
 end
+
+db_create

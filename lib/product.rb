@@ -17,6 +17,9 @@ class Product < Udacidata
     @price = opts[:price]
   end
 
+
+
+
   private
 
     # Reads the last line of the data file, and gets the id if one exists
