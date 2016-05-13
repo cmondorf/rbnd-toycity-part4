@@ -1,6 +1,6 @@
 require_relative 'find_by'
 require_relative 'errors'
-require 'csv'
+require 'csv' #http://www.sitepoint.com/guide-ruby-csv-library-part/
 
 class Udacidata
   # Your code goes here!
@@ -82,8 +82,51 @@ class Udacidata
           csv << [item.id, item.brand, item.name, item.price]
         end
       end
+      return to_destroy
    end
 
-
-
+# Product.where should return an array of Product objects that match a given brand or product name.
+  def self.where(options={})
+    array_of_products = []
+    database_content = CSV.read(@@database_path)[1]
+    products = database_content.map! do |product| #move content to hash to process by key/value pairs below
+      product_hash = {}
+    end
+    products.each do |product|
+      options.each do |key, value| #using key/value pairs to sift products and decide whether to add them to return array
+        if product[key] == value
+          array_of_products << self.new(product)
+        end
+      end
+    end
+    return array_of_products
   end
+
+# product_instance.update should change the information for a given Product object,
+# and save the new data to the database
+
+# def self.update(target)
+#   to_update = find(target)
+
+  def update(options = {})
+    if options[:brand] #if there is an entry for this parameter in the update method, then overwrite existing parameter for this product
+      @brand = options[:brand]
+    end
+    if options[:name]
+      @name=options[:name]
+    end
+    if options[:price]
+      @price = options[:price]
+    end
+    Product.destroy(@id) # remove original record
+    Product.create(id: @id, brand: @brand, name: @name, price: @price) #create a new record, but reusing old ID rathern than generating new one
+  end
+
+
+
+  #   #find
+  #   #rebuild
+  #   #replace #database writing already in create method, trigger create
+  # end
+
+end
