@@ -87,20 +87,30 @@ class Udacidata
 
 # Product.where should return an array of Product objects that match a given brand or product name.
   def self.where(options={})
-    array_of_products = []
-    database_content = CSV.read(@@database_path)[1]
-    products = database_content.map! do |product| #move content to hash to process by key/value pairs below
-      product_hash = {}
-    end
-    products.each do |product|
-      options.each do |key, value| #using key/value pairs to sift products and decide whether to add them to return array
-        if product[key] == value
-          array_of_products << self.new(product)
-        end
+    target_products = []
+    self.all.each do |product|
+      if product.brand == options[:brand] || product.name == options[:name] || product.price == options[:price]
+        target_products << product
       end
     end
-    return array_of_products
+    target_products
   end
+
+
+  #   database_content = CSV.read(@@database_path)[1]
+  #   p database_content
+  #   products = database_content.map! do |product| #move content to hash to process by key/value pairs below
+  #     product_hash = {}
+  #   end
+  #   products.each do |product|
+  #     options.each do |key, value| #using key/value pairs to sift products and decide whether to add them to return array
+  #       if product[key] == value
+  #         array_of_products << self.new(product)
+  #       end
+  #     end
+  #   end
+  #   return array_of_products
+  # end
 
 # product_instance.update should change the information for a given Product object,
 # and save the new data to the database
