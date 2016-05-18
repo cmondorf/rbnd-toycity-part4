@@ -10,13 +10,15 @@ module Analyzable
     return inventory_by_name
   end
   #
-  def count_by_brand(products)
+  def count_by_brand(products) # I think there may have been a mistake in the feedback here. The tests actually require that this method return a hash :)
+    intentory_by_brand_report = String.new
+
     # hash with inventory counts, organized by brand
     inventory_by_brand = Hash.new(0)
     products.each do |product|
       inventory_by_brand[product.brand] += 1
     end
-    return inventory_by_brand
+     inventory_by_brand
   end
 
 # inject?
@@ -42,11 +44,16 @@ module Analyzable
     #summary inventory report containing:
     report += "Summary Inventory Report:\n"
     report += "Average price: #{average_price(products)}\n"
-    report += "Brand count: #{count_by_brand(products)}\n"
-    report += "Name count #{count_by_name(products)}\n"
-    #average price,
-    #counts by brand, and
-    #counts by product name
+    report += "Brand counts: \n"
+    product_brand_count = count_by_brand(products)
+    product_brand_count.each do |brand, count|
+      report += "#{brand} count: #{count.to_s} \n"
+    end
+    report += "Name counts: \n"
+    product_brand_count = count_by_name(products)
+    product_brand_count.each do |name, count|
+      report += "#{name} count: #{count.to_s} \n"
+    end
     return report
   end
 

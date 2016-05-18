@@ -64,35 +64,6 @@ class Udacidata
        return new_array
      end
    end
-   #
-  #  def self.find(id)
-  #    array_of_products = self.all
-  #    #loop over all products
-  #    index = 0
-  #    while index < array_of_products.length
-  #      if array_of_products[index] == id
-  #        found_product = array_of_products[index]
-  #      end
-  #      index += 1
-  #    end
-  #    #found_product = array_of_products.find{|product| product.id == id_to_find}
-  #    if found_product == nil
-  #     raise ProductNotFoundError, "Product not found!"
-  #    else
-  #     return found_product
-  #    end
- #   end
- # end
-
-    #  array_of_products = self.all
-    #  array_of_products.each do |product| #{|item| return item if item.id == id}
-    #
-    #  if array_of_products.empty?
-    #    raise ProductNotFoundError, "Product not found!"
-    #  else
-    #    return array_of_products
-    #  end
-   #end
 
    def self.find(id)
      item = self.all.find{|item| item.id == id}
@@ -102,24 +73,9 @@ class Udacidata
      return item
    end
 
-  #  def self.destroy(id)
-  #    array_of_products = self.all
-  #    to_destroy = self.find(id)
-  #    array_of_products.delete(to_destroy)
-  #    #rewrite to CSV
-  #    CSV.open(@@database_path, "wb") do |csv| #db_create all over again
-  #       array_of_products.each do |item|
-  #         csv << [item.id, item.brand, item.name, item.price]
-  #       end
-  #     end
-  #     return to_destroy
-  #  end
 
   def self.destroy(target)
     array_of_products = all #extract all
-    if(target > array_of_products.length) #check if number out of range -> error message
-      raise ProductNotFoundError, "Product not found!"
-    end
     deletedProduct = nil
     counter = 0
     array_of_products.each do |product|
@@ -129,6 +85,10 @@ class Udacidata
       end
       counter += 1
     end
+    if deletedProduct == nil # if no product was matched in the loop over the products, then the product has not been found.
+      raise ProductNotFoundError, "Product not found!"
+    end
+
     CSV.open(@@database_path, "wb") do |csv|
       csv << ["id", "brand", "product", "price"]
     end
@@ -140,14 +100,6 @@ class Udacidata
     deletedProduct
   end
 
-#   CSV.open(@@database_path, "wb") do |csv|
-#     csv << ["id", "brand", "product", "price"]
-#   end
-#   products.each do |product|
-#     csv << products
-#   return deletedProduct
-# end
-
 # Product.where should return an array of Product objects that match a given brand or product name.
   def self.where(options={})
     target_products = []
@@ -158,28 +110,6 @@ class Udacidata
     end
     target_products
   end
-
-
-  #   database_content = CSV.read(@@database_path)[1]
-  #   p database_content
-  #   products = database_content.map! do |product| #move content to hash to process by key/value pairs below
-  #     product_hash = {}
-  #   end
-  #   products.each do |product|
-  #     options.each do |key, value| #using key/value pairs to sift products and decide whether to add them to return array
-  #       if product[key] == value
-  #         array_of_products << self.new(product)
-  #       end
-  #     end
-  #   end
-  #   return array_of_products
-  # end
-
-# product_instance.update should change the information for a given Product object,
-# and save the new data to the database
-
-# def self.update(target)
-#   to_update = find(target)
 
   def update(options = {})
     if options[:brand] #if there is an entry for this parameter in the update method, then overwrite existing parameter for this product
@@ -194,12 +124,5 @@ class Udacidata
     Product.destroy(@id) # remove original record
     Product.create(id: @id, brand: @brand, name: @name, price: @price) #create a new record, but reusing old ID rathern than generating new one
   end
-
-
-
-  #   #find
-  #   #rebuild
-  #   #replace #database writing already in create method, trigger create
-  # end
 
 end
