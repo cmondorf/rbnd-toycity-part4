@@ -64,26 +64,89 @@ class Udacidata
        return new_array
      end
    end
+   #
+  #  def self.find(id)
+  #    array_of_products = self.all
+  #    #loop over all products
+  #    index = 0
+  #    while index < array_of_products.length
+  #      if array_of_products[index] == id
+  #        found_product = array_of_products[index]
+  #      end
+  #      index += 1
+  #    end
+  #    #found_product = array_of_products.find{|product| product.id == id_to_find}
+  #    if found_product == nil
+  #     raise ProductNotFoundError, "Product not found!"
+  #    else
+  #     return found_product
+  #    end
+ #   end
+ # end
+
+    #  array_of_products = self.all
+    #  array_of_products.each do |product| #{|item| return item if item.id == id}
+    #
+    #  if array_of_products.empty?
+    #    raise ProductNotFoundError, "Product not found!"
+    #  else
+    #    return array_of_products
+    #  end
+   #end
 
    def self.find(id)
-     array_of_products = self.all
-     return array_of_products.each {|item| return item if item.id == id}
-     #a.select {|item|"a" == item}
+     item = self.all.find{|item| item.id == id}
+     if !item
+       raise ProductNotFoundError, "Product not found!"
+     end
+     return item
    end
 
-   def self.destroy(id)
-     array_of_products = self.all
-     to_destroy = self.find(id)
-     array_of_products.delete_if{|item| item.id==to_destroy.id}
-     #rewrite to CSV
-     CSV.open(@@database_path, "wb") do |csv| #db_create all over again
-      csv << ["id", "brand", "product", "price"]
-        array_of_products.each do |item|
-          csv << [item.id, item.brand, item.name, item.price]
-        end
+  #  def self.destroy(id)
+  #    array_of_products = self.all
+  #    to_destroy = self.find(id)
+  #    array_of_products.delete(to_destroy)
+  #    #rewrite to CSV
+  #    CSV.open(@@database_path, "wb") do |csv| #db_create all over again
+  #       array_of_products.each do |item|
+  #         csv << [item.id, item.brand, item.name, item.price]
+  #       end
+  #     end
+  #     return to_destroy
+  #  end
+
+  def self.destroy(target)
+    array_of_products = all #extract all
+    if(target > array_of_products.length) #check if number out of range -> error message
+      raise ProductNotFoundError, "Product not found!"
+    end
+    deletedProduct = nil
+    counter = 0
+    array_of_products.each do |product|
+      if(product.id == target)
+        deletedProduct = product
+        array_of_products.delete_at(counter)
       end
-      return to_destroy
-   end
+      counter += 1
+    end
+    CSV.open(@@database_path, "wb") do |csv|
+      csv << ["id", "brand", "product", "price"]
+    end
+    CSV.open(@@database_path, "a") do |csv|
+      array_of_products.each do |product|
+        csv << [product.id, product.brand, product.name, product.price]
+      end
+    end
+    deletedProduct
+  end
+
+#   CSV.open(@@database_path, "wb") do |csv|
+#     csv << ["id", "brand", "product", "price"]
+#   end
+#   products.each do |product|
+#     csv << products
+#   return deletedProduct
+# end
 
 # Product.where should return an array of Product objects that match a given brand or product name.
   def self.where(options={})
